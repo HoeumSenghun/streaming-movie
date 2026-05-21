@@ -7,7 +7,8 @@
     "watchlist": "Watchlist",
     "login": "Login",
     "browse": "Browse",
-    "menu": "Menu"
+    "menu": "Menu",
+    "profile": "Profile"
   },
   "home": {
     "trending": "Trending Now",
@@ -60,6 +61,25 @@
     "title": "Your watchlist",
     "empty": "Save movies and shows from their pages — they appear here.",
     "remove": "Remove"
+  },
+  "profile": {
+    "title": "Profile",
+    "guestLabel": "Guest profile — saved on this device only",
+    "defaultName": "Guest",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "Your name",
+    "bio": "Bio",
+    "bioPlaceholder": "A short note about you (optional)",
+    "avatarColor": "Avatar color",
+    "editProfile": "Edit profile",
+    "save": "Save",
+    "saved": "Saved",
+    "reset": "Reset to default",
+    "watchlistTitle": "Watchlist",
+    "watchlistCount": "{count, plural, =0 {No titles saved} one {# title saved} other {# titles saved}}",
+    "viewWatchlist": "View watchlist",
+    "signInLaterTitle": "Sign-in coming later",
+    "signInLaterBody": "Accounts will let you sync your profile and watchlist across phones and browsers. For now, everything stays on this device."
   },
   "movie": {
     "trailerHeading": "Watch trailer",

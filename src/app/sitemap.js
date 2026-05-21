@@ -16,7 +16,8 @@ export default async function sitemap () {
       { path: `/${loc}/movies/browse`, priority: 0.75 },
       { path: `/${loc}/tv-shows`, priority: 0.8 },
       { path: `/${loc}/search`, priority: 0.4 },
-      { path: `/${loc}/watchlist`, priority: 0.5 }
+      { path: `/${loc}/watchlist`, priority: 0.5 },
+      { path: `/${loc}/profile`, priority: 0.5 }
     )
   }
 

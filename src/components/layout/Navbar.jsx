@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link, usePathname, useRouter } from '@/i18n/navigation'
-import { Search, Menu, X, Bell, User } from 'lucide-react'
+import { Search, Menu, X, Bell } from 'lucide-react'
 import { getSiteName } from '@/lib/site-meta'
+import { UserAvatar } from '@/components/profile/UserAvatar'
+import { useUserContext } from '@/hooks/use-user-context'
 
 const navLinks = [
   { key: 'home', href: '/', isActive: p => p === '/' },
@@ -18,6 +20,7 @@ const navLinks = [
 
 export default function Navbar () {
   const siteName = getSiteName()
+  const { profile } = useUserContext()
   const t = useTranslations('nav')
   const tSearch = useTranslations('search')
   const pathname = usePathname()
@@ -156,9 +159,17 @@ export default function Navbar () {
             <Bell size={18} />
           </button>
 
-          <button type="button" className="hidden sm:flex p-1.5 bg-brand-red rounded-full text-white shrink-0">
-            <User size={16} />
-          </button>
+          <Link
+            href="/profile"
+            className="shrink-0 rounded-full ring-2 ring-transparent hover:ring-zinc-600 transition"
+            aria-label={t('profile')}
+          >
+            <UserAvatar
+              displayName={profile.displayName}
+              avatarColor={profile.avatarColor}
+              size="sm"
+            />
+          </Link>
         </div>
       </div>
 
@@ -211,6 +222,15 @@ export default function Navbar () {
                 className="block text-sm text-zinc-300 hover:text-white py-1"
               >
                 {t('browse')}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="block text-sm text-zinc-300 hover:text-white py-1"
+              >
+                {t('profile')}
               </Link>
             </li>
             <li>
