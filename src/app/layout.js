@@ -1,5 +1,5 @@
 import './globals.css'
-
+import { Analytics } from "@vercel/analytics/next"
 import { getSiteUrl } from '@/lib/site-url'
 
 export const metadata = {
@@ -29,7 +29,7 @@ export const metadata = {
 export default function RootLayout ({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">{children}<Analytics /></body>
     </html>
   )
 }
