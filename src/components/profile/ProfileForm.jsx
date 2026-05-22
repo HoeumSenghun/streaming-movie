@@ -3,11 +3,7 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useProfileStore } from '@/stores/profile-store'
-import {
-  AVATAR_COLORS,
-  PROFILE_LIMITS,
-  getAvatarColorClass
-} from '@/lib/user/profile-types'
+import { PROFILE_LIMITS } from '@/lib/user/profile-types'
 
 export function ProfileForm () {
   const t = useTranslations('profile')
@@ -17,12 +13,11 @@ export function ProfileForm () {
 
   const [displayName, setDisplayName] = useState(profile.displayName)
   const [bio, setBio] = useState(profile.bio)
-  const [avatarColor, setAvatarColor] = useState(profile.avatarColor)
   const [saved, setSaved] = useState(false)
 
   function handleSave (e) {
     e.preventDefault()
-    updateProfile({ displayName, bio, avatarColor })
+    updateProfile({ displayName, bio })
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -31,14 +26,13 @@ export function ProfileForm () {
     resetProfile()
     setDisplayName('')
     setBio('')
-    setAvatarColor('red')
     setSaved(false)
   }
 
   return (
-    <form onSubmit={handleSave} className="space-y-5">
+    <form onSubmit={handleSave} className="space-y-6">
       <div>
-        <label htmlFor="displayName" className="block text-sm text-zinc-400 mb-1.5">
+        <label htmlFor="displayName" className="block text-sm font-medium text-zinc-300 mb-1.5">
           {t('displayName')}
         </label>
         <input
@@ -48,16 +42,16 @@ export function ProfileForm () {
           onChange={e => setDisplayName(e.target.value)}
           maxLength={PROFILE_LIMITS.displayNameMax}
           placeholder={t('displayNamePlaceholder')}
-          className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white
-            placeholder:text-zinc-500 outline-none focus:border-zinc-500"
+          className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white
+            placeholder:text-zinc-600 outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
         />
-        <p className="text-xs text-zinc-600 mt-1">
+        <p className="text-xs text-zinc-600 mt-1 text-right tabular-nums">
           {displayName.length}/{PROFILE_LIMITS.displayNameMax}
         </p>
       </div>
 
       <div>
-        <label htmlFor="bio" className="block text-sm text-zinc-400 mb-1.5">
+        <label htmlFor="bio" className="block text-sm font-medium text-zinc-300 mb-1.5">
           {t('bio')}
         </label>
         <textarea
@@ -67,50 +61,27 @@ export function ProfileForm () {
           maxLength={PROFILE_LIMITS.bioMax}
           rows={3}
           placeholder={t('bioPlaceholder')}
-          className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white
-            placeholder:text-zinc-500 outline-none focus:border-zinc-500 resize-none"
+          className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-white
+            placeholder:text-zinc-600 outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 resize-none"
         />
-        <p className="text-xs text-zinc-600 mt-1">
+        <p className="text-xs text-zinc-600 mt-1 text-right tabular-nums">
           {bio.length}/{PROFILE_LIMITS.bioMax}
         </p>
       </div>
 
-      <fieldset>
-        <legend className="block text-sm text-zinc-400 mb-2">
-          {t('avatarColor')}
-        </legend>
-        <div className="flex flex-wrap gap-2">
-          {AVATAR_COLORS.map(c => (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => setAvatarColor(c.id)}
-              className={`h-9 w-9 rounded-full border-2 transition
-                ${getAvatarColorClass(c.id)}
-                ${avatarColor === c.id
-                  ? 'border-white ring-2 ring-white/30'
-                  : 'border-transparent opacity-80 hover:opacity-100'
-                }`}
-              aria-label={c.id}
-              aria-pressed={avatarColor === c.id}
-            />
-          ))}
-        </div>
-      </fieldset>
-
-      <div className="flex flex-wrap gap-3 pt-2">
+      <div className="flex flex-col sm:flex-row gap-3 pt-1">
         <button
           type="submit"
-          className="bg-white text-black font-semibold px-5 py-2.5 rounded-lg text-sm
-            hover:bg-zinc-200 transition"
+          className="flex-1 sm:flex-none bg-white text-black font-semibold px-6 py-3 rounded-xl text-sm
+            hover:bg-zinc-200 active:bg-zinc-300 transition touch-manipulation"
         >
           {saved ? t('saved') : t('save')}
         </button>
         <button
           type="button"
           onClick={handleReset}
-          className="border border-zinc-600 text-zinc-300 px-5 py-2.5 rounded-lg text-sm
-            hover:bg-zinc-800 transition"
+          className="flex-1 sm:flex-none border border-zinc-600 text-zinc-300 px-6 py-3 rounded-xl text-sm
+            hover:bg-zinc-800 active:bg-zinc-700 transition touch-manipulation"
         >
           {t('reset')}
         </button>

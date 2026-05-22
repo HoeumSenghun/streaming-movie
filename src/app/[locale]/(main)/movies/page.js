@@ -3,8 +3,8 @@ import { getTranslations } from 'next-intl/server'
 export const revalidate = 3600
 import MovieCard from '@/components/movie/MovieCard'
 import { fetchPopularMovies } from '@/actions/movies.actions'
-import { Link } from '@/i18n/navigation'
 import { getSiteName } from '@/lib/site-meta'
+import { PaginationNav } from '@/components/ui/PaginationNav'
 
 export async function generateMetadata ({ params }) {
   const { locale } = await params
@@ -27,7 +27,7 @@ export default async function MoviesPage ({ params, searchParams }) {
   const totalPages = res.totalPages || 1
 
   return (
-    <div className="pt-24 min-h-screen max-w-7xl mx-auto px-4 pb-16">
+    <div className="pt-24 min-h-screen max-w-7xl mx-auto px-4 pb-16 overflow-x-hidden">
       <h1 className="text-2xl font-semibold mb-6">{t('popular')}</h1>
       {res.error && (
         <p className="text-amber-400 text-sm mb-4">{res.error}</p>
@@ -38,33 +38,15 @@ export default async function MoviesPage ({ params, searchParams }) {
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <nav className="mt-10 flex flex-wrap justify-center gap-2" aria-label="Pagination">
-          {page > 1 ? (
-            <Link
-              href={`/movies?page=${page - 1}`}
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              ← {tCat('prev')}
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{tCat('prev')}</span>
-          )}
-          <span className="px-4 py-2 text-sm text-zinc-400">
-            {tCat('pageOf', { page, total: totalPages })}
-          </span>
-          {page < totalPages ? (
-            <Link
-              href={`/movies?page=${page + 1}`}
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              {tCat('next')} →
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{tCat('next')}</span>
-          )}
-        </nav>
-      )}
+      <PaginationNav
+        page={page}
+        totalPages={totalPages}
+        prevHref={`/movies?page=${page - 1}`}
+        nextHref={`/movies?page=${page + 1}`}
+        prevLabel={tCat('prev')}
+        nextLabel={tCat('next')}
+        pageLabel={tCat('pageOf', { page, total: totalPages })}
+      />
     </div>
   )
 }

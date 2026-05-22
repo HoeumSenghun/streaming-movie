@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import MovieCard from '@/components/movie/MovieCard'
 import { fetchMovieGenres, fetchDiscoverMovies } from '@/actions/movies.actions'
 import { Link } from '@/i18n/navigation'
+import { PaginationNav } from '@/components/ui/PaginationNav'
 import { getSiteName } from '@/lib/site-meta'
 
 export const revalidate = 3600
@@ -74,41 +75,23 @@ export default async function MoviesBrowsePage ({ params, searchParams }) {
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <nav className="mt-10 flex flex-wrap justify-center gap-2" aria-label="Pagination">
-          {page > 1 ? (
-            <Link
-              href={
-                genreId
-                  ? `/movies/browse?genre=${encodeURIComponent(genreId)}&page=${page - 1}`
-                  : `/movies/browse?page=${page - 1}`
-              }
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              ← {tCat('prev')}
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{tCat('prev')}</span>
-          )}
-          <span className="px-4 py-2 text-sm text-zinc-400">
-            {tCat('pageOf', { page, total: totalPages })}
-          </span>
-          {page < totalPages ? (
-            <Link
-              href={
-                genreId
-                  ? `/movies/browse?genre=${encodeURIComponent(genreId)}&page=${page + 1}`
-                  : `/movies/browse?page=${page + 1}`
-              }
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              {tCat('next')} →
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{tCat('next')}</span>
-          )}
-        </nav>
-      )}
+      <PaginationNav
+        page={page}
+        totalPages={totalPages}
+        prevHref={
+          genreId
+            ? `/movies/browse?genre=${encodeURIComponent(genreId)}&page=${page - 1}`
+            : `/movies/browse?page=${page - 1}`
+        }
+        nextHref={
+          genreId
+            ? `/movies/browse?genre=${encodeURIComponent(genreId)}&page=${page + 1}`
+            : `/movies/browse?page=${page + 1}`
+        }
+        prevLabel={tCat('prev')}
+        nextLabel={tCat('next')}
+        pageLabel={tCat('pageOf', { page, total: totalPages })}
+      />
     </div>
   )
 }

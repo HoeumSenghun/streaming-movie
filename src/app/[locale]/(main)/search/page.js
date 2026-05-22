@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
+import { PaginationNav } from '@/components/ui/PaginationNav'
 import { fetchSearchMulti } from '@/actions/movies.actions'
 import { getSiteName } from '@/lib/site-meta'
 
@@ -89,33 +90,15 @@ export default async function SearchPage ({ params, searchParams }) {
         })}
       </ul>
 
-      {totalPages > 1 && (
-        <nav className="mt-10 flex flex-wrap justify-center gap-2" aria-label="Pagination">
-          {page > 1 ? (
-            <Link
-              href={`/search?q=${encodeURIComponent(q)}&page=${page - 1}`}
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              ← {t('prev')}
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{t('prev')}</span>
-          )}
-          <span className="px-4 py-2 text-sm text-zinc-400">
-            {t('pageOf', { page, total: totalPages })}
-          </span>
-          {page < totalPages ? (
-            <Link
-              href={`/search?q=${encodeURIComponent(q)}&page=${page + 1}`}
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              {t('next')} →
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{t('next')}</span>
-          )}
-        </nav>
-      )}
+      <PaginationNav
+        page={page}
+        totalPages={totalPages}
+        prevHref={`/search?q=${encodeURIComponent(q)}&page=${page - 1}`}
+        nextHref={`/search?q=${encodeURIComponent(q)}&page=${page + 1}`}
+        prevLabel={t('prev')}
+        nextLabel={t('next')}
+        pageLabel={t('pageOf', { page, total: totalPages })}
+      />
     </div>
   )
 }
