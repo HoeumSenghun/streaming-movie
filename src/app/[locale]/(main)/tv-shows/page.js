@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server'
-import { Link } from '@/i18n/navigation'
 import { TVCard } from '@/components/tv/TVCard'
+import { PaginationNav } from '@/components/ui/PaginationNav'
 import { fetchPopularTv } from '@/actions/tv.actions'
 import { getSiteName } from '@/lib/site-meta'
 
@@ -26,7 +26,7 @@ export default async function TvShowsPage ({ params, searchParams }) {
   const totalPages = res.totalPages || 1
 
   return (
-    <div className="pt-24 min-h-screen max-w-7xl mx-auto px-4 pb-16">
+    <div className="pt-24 min-h-screen max-w-7xl mx-auto px-4 pb-16 overflow-x-hidden">
       <h1 className="text-2xl font-semibold mb-6">{t('popular')}</h1>
       {res.error && (
         <p className="text-amber-400 text-sm mb-4">{res.error}</p>
@@ -37,33 +37,15 @@ export default async function TvShowsPage ({ params, searchParams }) {
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <nav className="mt-10 flex flex-wrap justify-center gap-2" aria-label="Pagination">
-          {page > 1 ? (
-            <Link
-              href={`/tv-shows?page=${page - 1}`}
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              ← {t('prev')}
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{t('prev')}</span>
-          )}
-          <span className="px-4 py-2 text-sm text-zinc-400">
-            {t('pageOf', { page, total: totalPages })}
-          </span>
-          {page < totalPages ? (
-            <Link
-              href={`/tv-shows?page=${page + 1}`}
-              className="px-4 py-2 rounded-lg bg-zinc-800 text-sm hover:bg-zinc-700"
-            >
-              {t('next')} →
-            </Link>
-          ) : (
-            <span className="px-4 py-2 rounded-lg bg-zinc-900 text-zinc-600 text-sm">{t('next')}</span>
-          )}
-        </nav>
-      )}
+      <PaginationNav
+        page={page}
+        totalPages={totalPages}
+        prevHref={`/tv-shows?page=${page - 1}`}
+        nextHref={`/tv-shows?page=${page + 1}`}
+        prevLabel={t('prev')}
+        nextLabel={t('next')}
+        pageLabel={t('pageOf', { page, total: totalPages })}
+      />
     </div>
   )
 }
