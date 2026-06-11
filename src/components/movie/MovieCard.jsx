@@ -11,7 +11,7 @@ export default function MovieCard ({ movie }) {
   const has = useWatchlistStore(s => s.has(movie.id, 'movie'))
 
   const imageUrl = movie.poster_path
-    ? `https://image.tmdb.org/t/p/w342${movie.poster_path}`
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : null
 
   const rating = Number(movie.vote_average)
