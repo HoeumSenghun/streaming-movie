@@ -12,7 +12,7 @@ export function TVCard ({ show }) {
   const has = useWatchlistStore(s => s.has(show.id, 'tv'))
 
   const imageUrl = show.poster_path
-    ? `https://image.tmdb.org/t/p/w342${show.poster_path}`
+    ? `https://image.tmdb.org/t/p/w500${show.poster_path}`
     : null
 
   const rating = Number(show.vote_average)

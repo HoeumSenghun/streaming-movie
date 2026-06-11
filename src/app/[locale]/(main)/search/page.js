@@ -63,7 +63,7 @@ export default async function SearchPage ({ params, searchParams }) {
           const href = isTv ? `/tv-shows/${entry.id}` : `/movies/${entry.id}`
           const date = isTv ? entry.first_air_date : entry.release_date
           const poster = entry.poster_path
-            ? `https://image.tmdb.org/t/p/w92${entry.poster_path}`
+            ? `https://image.tmdb.org/t/p/w185${entry.poster_path}`
             : null
           return (
             <li key={`${entry.media_type}-${entry.id}`}>
