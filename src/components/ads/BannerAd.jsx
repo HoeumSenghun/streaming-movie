@@ -13,7 +13,7 @@ export default function BannerAd({ size = 'leaderboard', className = '' }) {
     <div className={`${cls} bg-zinc-900 border border-dashed border-zinc-700 
       rounded flex items-center justify-center ${className}`}>
       <span className="text-xs text-zinc-600">
-        Ad Space — {label}
+        Ad Space - {label}
       </span>
     </div>
   );
