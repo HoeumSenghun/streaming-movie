@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { useWatchlistStore } from '@/stores/watchlist-store'
+import { Play } from 'lucide-react';
 
 export function HomeHeroActions ({ featured }) {
   const t = useTranslations('home')
@@ -22,7 +23,7 @@ export function HomeHeroActions ({ featured }) {
         className="flex items-center gap-2 bg-white text-black
           font-semibold px-6 py-3 rounded-lg hover:bg-zinc-200 transition"
       >
-        ▶ {t('watchNow')}
+        <Play/> {t('watchNow')}
       </Link>
       <button
         type="button"

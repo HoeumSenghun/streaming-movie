@@ -6,6 +6,7 @@ import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { Search, Menu, X, Bell } from 'lucide-react'
 import { getSiteName } from '@/lib/site-meta'
 import { UserAvatar } from '@/components/profile/UserAvatar'
+import { Megaphone } from 'lucide-react';
 
 const navLinks = [
   { key: 'home', href: '/', isActive: p => p === '/' },
@@ -60,7 +61,7 @@ export default function Navbar () {
         flex items-center justify-center">
         <span className="text-xs text-zinc-500 border border-dashed
           border-zinc-700 px-4 py-0.5 rounded">
-          📢 Advertisement — 728x90
+          <Megaphone size={12} className="inline mr-1" />Advertisement - 728x90
         </span>
       </div>
 
