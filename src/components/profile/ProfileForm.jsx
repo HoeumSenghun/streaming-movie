@@ -1,25 +1,29 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useProfileStore } from '@/stores/profile-store'
 import { PROFILE_LIMITS } from '@/lib/user/profile-types'
 
-export function ProfileForm () {
+function ProfileFormEditor ({ initialDisplayName, initialBio }) {
   const t = useTranslations('profile')
-  const profile = useProfileStore(s => s.profile)
   const updateProfile = useProfileStore(s => s.updateProfile)
   const resetProfile = useProfileStore(s => s.resetProfile)
 
-  const [displayName, setDisplayName] = useState(profile.displayName)
-  const [bio, setBio] = useState(profile.bio)
+  const [displayName, setDisplayName] = useState(initialDisplayName)
+  const [bio, setBio] = useState(initialBio)
   const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    if (!saved) return undefined
+    const timer = setTimeout(() => setSaved(false), 2000)
+    return () => clearTimeout(timer)
+  }, [saved])
 
   function handleSave (e) {
     e.preventDefault()
     updateProfile({ displayName, bio })
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
   }
 
   function handleReset () {
@@ -87,5 +91,39 @@ export function ProfileForm () {
         </button>
       </div>
     </form>
+  )
+}
+
+export function ProfileForm () {
+  const t = useTranslations('profile')
+  const tCommon = useTranslations('common')
+  const profile = useProfileStore(s => s.profile)
+  const hasHydrated = useProfileStore(s => s._hasHydrated)
+
+  if (!hasHydrated) {
+    return (
+      <div className="space-y-6 opacity-60 pointer-events-none" aria-busy="true">
+        <p className="text-sm text-zinc-500">{tCommon('loading')}</p>
+        <div>
+          <label className="block text-sm font-medium text-zinc-300 mb-1.5">
+            {t('displayName')}
+          </label>
+          <div className="h-10 rounded-xl border border-zinc-700 bg-zinc-950" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-zinc-300 mb-1.5">
+            {t('bio')}
+          </label>
+          <div className="h-24 rounded-xl border border-zinc-700 bg-zinc-950" />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <ProfileFormEditor
+      initialDisplayName={profile.displayName ?? ''}
+      initialBio={profile.bio ?? ''}
+    />
   )
 }

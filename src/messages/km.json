@@ -1,4 +1,14 @@
 {
+  "common": {
+    "noPoster": "គ្មានផ្ទាំងផ្សាយ",
+    "movie": "ភាពយន្ត",
+    "tv": "ទូរទស្សន៍",
+    "loading": "កំពុងផ្ទុក…"
+  },
+  "notFound": {
+    "message": "រកមិនឃើញទំព័រនេះទេ។",
+    "backHome": "ត្រឡប់ទៅ{home}"
+  },
   "nav": {
     "home": "ទំព័រដើម",
     "movies": "ភាពយន្ត",
@@ -55,7 +65,10 @@
     "streaming": "Streaming",
     "rent": "ជួល",
     "buy": "ទិញ",
-    "noProviders": "គ្មានទិន្នន័យអ្នកផ្តល់សេវាក្នុងតំបន់ នៅ TMDB។"
+    "noProviders": "គ្មានទិន្នន័យអ្នកផ្តល់សេវាក្នុងតំបន់ នៅ TMDB។",
+    "runtimeMins": "{mins} នាទី",
+    "seasons": "{count} រដូវកាល",
+    "episodeRuntime": "~{mins} នាទី/ភាគ"
   },
   "watchlistPage": {
     "title": "បញ្ជីមើលរបស់អ្នក",

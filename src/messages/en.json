@@ -1,4 +1,14 @@
 {
+  "common": {
+    "noPoster": "No poster",
+    "movie": "Movie",
+    "tv": "TV",
+    "loading": "Loading…"
+  },
+  "notFound": {
+    "message": "This page could not be found.",
+    "backHome": "Back to {home}"
+  },
   "nav": {
     "home": "Home",
     "movies": "Movies",
@@ -55,7 +65,10 @@
     "streaming": "Streaming",
     "rent": "Rent",
     "buy": "Buy",
-    "noProviders": "No provider data for your region in TMDB."
+    "noProviders": "No provider data for your region in TMDB.",
+    "runtimeMins": "{mins} min",
+    "seasons": "{count, plural, one {# season} other {# seasons}}",
+    "episodeRuntime": "~{mins} min/ep"
   },
   "watchlistPage": {
     "title": "Your watchlist",

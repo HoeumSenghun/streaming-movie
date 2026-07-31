@@ -51,7 +51,7 @@ export async function fetchTvById (id, locale) {
     }
     let videoUrl = pickPlayableVideoUrl(show.videos?.results ?? [])
     if (!videoUrl) {
-      const more = await getTvVideos(id)
+      const more = await getTvVideos(id, language)
       videoUrl = pickPlayableVideoUrl(more)
     }
     return { ok: true, show, videoUrl, error: null }

@@ -8,7 +8,7 @@ import {
   getMovieVideos,
   pickPlayableVideoUrl,
   localeToTmdbLanguage,
-  searchMulti,
+  searchMoviesAndTv,
   getSimilarMovies,
   getRecommendedMovies,
   getMovieWatchProviders,
@@ -86,7 +86,7 @@ export async function fetchMovieById (id, locale) {
     }
     let videoUrl = pickPlayableVideoUrl(movie.videos?.results ?? [])
     if (!videoUrl) {
-      const more = await getMovieVideos(id)
+      const more = await getMovieVideos(id, language)
       videoUrl = pickPlayableVideoUrl(more)
     }
     return { ok: true, movie, videoUrl, error: null }
@@ -107,7 +107,7 @@ export async function fetchSearchMulti (locale, query, page = 1) {
   }
   const language = localeToTmdbLanguage(locale)
   try {
-    const { results, totalPages } = await searchMulti(query, language, page)
+    const { results, totalPages } = await searchMoviesAndTv(query, language, page)
     return { ok: true, results, totalPages, error: null }
   } catch (err) {
     console.error('[fetchSearchMulti]', err)

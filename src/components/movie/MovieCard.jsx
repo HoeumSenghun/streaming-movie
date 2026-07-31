@@ -7,7 +7,9 @@ import { useWatchlistStore } from '@/stores/watchlist-store'
 
 export default function MovieCard ({ movie }) {
   const t = useTranslations('home')
+  const tCommon = useTranslations('common')
   const toggle = useWatchlistStore(s => s.toggle)
+  const hasHydrated = useWatchlistStore(s => s._hasHydrated)
   const has = useWatchlistStore(s => s.has(movie.id, 'movie'))
 
   const imageUrl = movie.poster_path
@@ -31,7 +33,7 @@ export default function MovieCard ({ movie }) {
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center p-4 text-center text-xs text-zinc-500">
-            No poster
+            {tCommon('noPoster')}
           </div>
         )}
 
@@ -58,6 +60,7 @@ export default function MovieCard ({ movie }) {
             </span>
             <button
               type="button"
+              disabled={!hasHydrated}
               onClick={e => {
                 e.preventDefault()
                 e.stopPropagation()
@@ -68,7 +71,7 @@ export default function MovieCard ({ movie }) {
                   posterPath: movie.poster_path ?? null
                 })
               }}
-              className={`p-1.5 rounded-full border border-zinc-600 transition-colors
+              className={`p-1.5 rounded-full border border-zinc-600 transition-colors disabled:opacity-50
                 ${has ? 'bg-brand-red text-white' : 'bg-zinc-800/80 hover:bg-zinc-700'}`}
               aria-pressed={has}
               aria-label={t('addWatchlist')}

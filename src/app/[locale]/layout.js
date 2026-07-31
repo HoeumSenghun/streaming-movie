@@ -2,11 +2,12 @@ import { Inter, Battambang } from 'next/font/google'
 import { setRequestLocale } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
+import { Analytics } from '@vercel/analytics/next'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import { HtmlLang } from '@/components/layout/HtmlLang'
 import { getSiteUrl } from '@/lib/site-url'
 import { getSiteName } from '@/lib/site-meta'
+import { routing } from '@/i18n/routing'
 
 const inter = Inter({ subsets: ['latin'] })
 const battambang = Battambang({
@@ -18,7 +19,8 @@ const battambang = Battambang({
 export async function generateMetadata ({ params }) {
   const { locale } = await params
   const siteName = getSiteName()
-  const description = 'Watch trailers and discover movies & TV — browse by genre, build a watchlist, and see where to stream.'
+  const description =
+    'Watch trailers and discover movies & TV — browse by genre, build a watchlist, and see where to stream.'
   const baseUrl = new URL(getSiteUrl())
 
   return {
@@ -28,13 +30,7 @@ export async function generateMetadata ({ params }) {
       template: `%s | ${siteName}`
     },
     description,
-    alternates: {
-      canonical: `/${locale}`,
-      languages: {
-        en: '/en',
-        km: '/km'
-      }
-    },
+    applicationName: siteName,
     openGraph: {
       title: siteName,
       description,
@@ -51,7 +47,7 @@ export async function generateMetadata ({ params }) {
 }
 
 export function generateStaticParams () {
-  return [{ locale: 'en' }, { locale: 'km' }]
+  return routing.locales.map(locale => ({ locale }))
 }
 
 export default async function LocaleLayout ({ children, params }) {
@@ -62,15 +58,17 @@ export default async function LocaleLayout ({ children, params }) {
   const fontClass = locale === 'km' ? battambang.className : inter.className
 
   return (
-    <div
-      className={`${fontClass} bg-zinc-950 text-white min-h-screen flex flex-col`}
-    >
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        <HtmlLang />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-      </NextIntlClientProvider>
-      <Footer />
-    </div>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${fontClass} antialiased`}>
+        <div className="bg-zinc-950 text-white min-h-screen flex flex-col">
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </NextIntlClientProvider>
+        </div>
+        <Analytics />
+      </body>
+    </html>
   )
 }

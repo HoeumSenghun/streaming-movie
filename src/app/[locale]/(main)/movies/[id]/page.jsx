@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import {
   fetchMovieById,
@@ -17,6 +17,11 @@ import { getSiteName, getWatchRegion } from '@/lib/site-meta'
 
 export const revalidate = 3600
 
+function formatRating (value) {
+  const n = Number(value)
+  return Number.isFinite(n) ? n.toFixed(1) : '—'
+}
+
 export async function generateMetadata ({ params }) {
   const { locale, id } = await params
   const siteName = getSiteName()
@@ -30,17 +35,31 @@ export async function generateMetadata ({ params }) {
     : movie.poster_path
       ? `https://image.tmdb.org/t/p/w780${movie.poster_path}`
       : undefined
+  const title = `${movie.title} — ${siteName}`
   return {
-    title: `${movie.title} — ${siteName}`,
+    title,
     description: movie.overview,
-    openGraph: ogImage
-      ? { images: [{ url: ogImage, alt: movie.title }] }
-      : undefined
+    alternates: {
+      canonical: `/${locale}/movies/${id}`,
+      languages: {
+        en: `/en/movies/${id}`,
+        km: `/km/movies/${id}`
+      }
+    },
+    openGraph: {
+      title,
+      description: movie.overview || undefined,
+      type: 'website',
+      siteName,
+      locale,
+      ...(ogImage ? { images: [{ url: ogImage, alt: movie.title }] } : {})
+    }
   }
 }
 
 export default async function MovieDetailPage ({ params }) {
   const { locale, id } = await params
+  setRequestLocale(locale)
 
   const movieRes = await fetchMovieById(id, locale)
 
@@ -78,6 +97,7 @@ export default async function MovieDetailPage ({ params }) {
     : null
 
   const cast = (movie.credits?.cast ?? []).slice(0, 16)
+  const ratingLabel = formatRating(movie.vote_average)
 
   return (
     <div className="min-h-screen pb-16">
@@ -108,9 +128,10 @@ export default async function MovieDetailPage ({ params }) {
         </Link>
         <h1 className="text-3xl font-bold mb-4">{movie.title}</h1>
         <p className="text-zinc-400 text-sm mb-2">
-          {movie.release_date?.slice(0, 4)} · ★{' '}
-          {Number(movie.vote_average).toFixed(1)}
-          {movie.runtime ? ` · ${movie.runtime} min` : ''}
+          {movie.release_date?.slice(0, 4)} · ★ {ratingLabel}
+          {movie.runtime
+            ? ` · ${tDetail('runtimeMins', { mins: movie.runtime })}`
+            : ''}
         </p>
         <p className="text-zinc-300 leading-relaxed mb-8">{movie.overview}</p>
         <div className="flex flex-wrap gap-3">

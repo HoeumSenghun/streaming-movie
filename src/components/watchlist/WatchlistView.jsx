@@ -7,8 +7,19 @@ import { useWatchlistStore } from '@/stores/watchlist-store'
 
 export function WatchlistView () {
   const t = useTranslations('watchlistPage')
+  const tCommon = useTranslations('common')
   const items = useWatchlistStore(s => s.items)
   const remove = useWatchlistStore(s => s.remove)
+  const hasHydrated = useWatchlistStore(s => s._hasHydrated)
+
+  if (!hasHydrated) {
+    return (
+      <div className="pt-24 min-h-screen max-w-4xl mx-auto px-4 pb-16">
+        <h1 className="text-2xl font-semibold mb-8">{t('title')}</h1>
+        <p className="text-zinc-500 text-sm">{tCommon('loading')}</p>
+      </div>
+    )
+  }
 
   if (items.length === 0) {
     return (

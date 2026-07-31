@@ -3,17 +3,18 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link, usePathname, useRouter } from '@/i18n/navigation'
-import { Search, Menu, X, Bell } from 'lucide-react'
+import { Search, Menu, X, Megaphone } from 'lucide-react'
 import { getSiteName } from '@/lib/site-meta'
 import { UserAvatar } from '@/components/profile/UserAvatar'
-import { Megaphone } from 'lucide-react';
 
 const navLinks = [
   { key: 'home', href: '/', isActive: p => p === '/' },
   {
     key: 'movies',
     href: '/movies',
-    isActive: p => p === '/movies' || p.startsWith('/movies/')
+    isActive: p =>
+      p === '/movies' ||
+      (p.startsWith('/movies/') && !p.startsWith('/movies/browse'))
   },
   { key: 'tvShows', href: '/tv-shows', isActive: p => p.startsWith('/tv-shows') }
 ]
@@ -155,10 +156,6 @@ export default function Navbar () {
           >
             {t('watchlist')}
           </Link>
-
-          <button type="button" className="hidden md:block p-2 text-zinc-400 hover:text-white shrink-0">
-            <Bell size={18} />
-          </button>
 
           <Link
             href="/profile"

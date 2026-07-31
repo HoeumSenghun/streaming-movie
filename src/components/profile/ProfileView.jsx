@@ -40,7 +40,9 @@ export function ProfileView () {
         <div className="relative mt-6 grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-black/30 border border-zinc-800/80 px-4 py-3">
             <p className="text-2xl font-bold text-white tabular-nums">{watchlistCount}</p>
-            <p className="text-xs text-zinc-500 mt-0.5">{t('watchlistTitle')}</p>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              {t('watchlistCount', { count: watchlistCount })}
+            </p>
           </div>
           <Link
             href="/watchlist"
