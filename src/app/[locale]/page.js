@@ -1,15 +1,31 @@
 import Image from 'next/image'
-import { getTranslations } from 'next-intl/server'
-
-export const revalidate = 3600
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import MovieCard from '@/components/movie/MovieCard'
 import BannerAd from '@/components/ads/BannerAd'
 import { HomeHeroActions } from '@/components/home/HomeHeroActions'
 import { fetchTrendingMovies, fetchNowPlayingMovies } from '@/actions/movies.actions'
 import { getSiteName } from '@/lib/site-meta'
 
+export const revalidate = 3600
+
+export async function generateMetadata ({ params }) {
+  const { locale } = await params
+  const siteName = getSiteName()
+  return {
+    title: siteName,
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        en: '/en',
+        km: '/km'
+      }
+    }
+  }
+}
+
 export default async function HomePage ({ params }) {
   const { locale } = await params
+  setRequestLocale(locale)
   const t = await getTranslations('home')
   const siteName = getSiteName()
 

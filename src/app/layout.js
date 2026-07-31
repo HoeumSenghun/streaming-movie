@@ -1,35 +1,9 @@
 import './globals.css'
-import { Analytics } from "@vercel/analytics/next"
-import { getSiteUrl } from '@/lib/site-url'
 
-export const metadata = {
-  metadataBase: new URL(getSiteUrl()),
-  title: {
-    default: 'MerlMovie24',
-    template: '%s | MerlMovie24'
-  },
-  description: 'MerlMovie24',
-  applicationName: 'MerlMovie24',
-  alternates: {
-    canonical: '/'
-  },
-  openGraph: {
-    title: 'MerlMovie24',
-    description: 'MerlMovie24',
-    type: 'website',
-    siteName: 'MerlMovie24'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'MerlMovie24',
-    description: 'MerlMovie24'
-  }
-}
-
+/**
+ * Pass-through root layout so `[locale]/layout` can own `<html lang>` / `<body>`.
+ * Required because a root `not-found.js` exists.
+ */
 export default function RootLayout ({ children }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">{children}<Analytics /></body>
-    </html>
-  )
+  return children
 }

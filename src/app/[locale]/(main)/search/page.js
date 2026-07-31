@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { PaginationNav } from '@/components/ui/PaginationNav'
@@ -14,18 +14,25 @@ export async function generateMetadata ({ params, searchParams }) {
   const t = await getTranslations({ locale, namespace: 'search' })
   const site = getSiteName()
   return {
-    title: q ? `${q} — ${t('resultsTitle')} | ${site}` : `${t('resultsTitle')} | ${site}`
+    title: q ? `${q} — ${t('resultsTitle')} | ${site}` : `${t('resultsTitle')} | ${site}`,
+    alternates: {
+      canonical: q
+        ? `/${locale}/search?q=${encodeURIComponent(q)}`
+        : `/${locale}/search`
+    }
   }
 }
 
 export default async function SearchPage ({ params, searchParams }) {
   const { locale } = await params
+  setRequestLocale(locale)
   const sp = await searchParams
   const q = typeof sp?.q === 'string' ? sp.q.trim() : ''
   const page = Math.max(1, Number(sp?.page) || 1)
 
   const t = await getTranslations('search')
   const tNav = await getTranslations('nav')
+  const tCommon = await getTranslations('common')
 
   if (!q) {
     return (
@@ -40,9 +47,7 @@ export default async function SearchPage ({ params, searchParams }) {
   }
 
   const res = await fetchSearchMulti(locale, q, page)
-  const items = (res.results ?? []).filter(
-    r => r.media_type === 'movie' || r.media_type === 'tv'
-  )
+  const items = res.results ?? []
   const totalPages = res.totalPages ?? 1
 
   return (
@@ -80,7 +85,7 @@ export default async function SearchPage ({ params, searchParams }) {
                 <div className="min-w-0">
                   <p className="font-medium text-white line-clamp-1">{title}</p>
                   <p className="text-xs text-zinc-500 mt-0.5">
-                    {isTv ? 'TV' : 'Movie'}
+                    {isTv ? tCommon('tv') : tCommon('movie')}
                     {date ? ` · ${date.slice(0, 4)}` : ''}
                   </p>
                 </div>
@@ -90,15 +95,17 @@ export default async function SearchPage ({ params, searchParams }) {
         })}
       </ul>
 
-      <PaginationNav
-        page={page}
-        totalPages={totalPages}
-        prevHref={`/search?q=${encodeURIComponent(q)}&page=${page - 1}`}
-        nextHref={`/search?q=${encodeURIComponent(q)}&page=${page + 1}`}
-        prevLabel={t('prev')}
-        nextLabel={t('next')}
-        pageLabel={t('pageOf', { page, total: totalPages })}
-      />
+      {items.length > 0 && (
+        <PaginationNav
+          page={page}
+          totalPages={totalPages}
+          prevHref={`/search?q=${encodeURIComponent(q)}&page=${page - 1}`}
+          nextHref={`/search?q=${encodeURIComponent(q)}&page=${page + 1}`}
+          prevLabel={t('prev')}
+          nextLabel={t('next')}
+          pageLabel={t('pageOf', { page, total: totalPages })}
+        />
+      )}
     </div>
   )
 }

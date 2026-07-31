@@ -7,13 +7,15 @@ export function DetailWatchlistRow ({ id, mediaType, title, posterPath }) {
   const t = useTranslations('home')
   const has = useWatchlistStore(s => s.has(id, mediaType))
   const toggle = useWatchlistStore(s => s.toggle)
+  const hasHydrated = useWatchlistStore(s => s._hasHydrated)
 
   return (
     <button
       type="button"
+      disabled={!hasHydrated}
       onClick={() =>
         toggle({ id, mediaType, title, posterPath })}
-      className={`inline-flex items-center gap-2 font-medium px-6 py-3 rounded-lg border transition
+      className={`inline-flex items-center gap-2 font-medium px-6 py-3 rounded-lg border transition disabled:opacity-60
         ${has
           ? 'bg-brand-red/20 border-brand-red text-white'
           : 'bg-zinc-700/60 border-zinc-600 hover:bg-zinc-700'

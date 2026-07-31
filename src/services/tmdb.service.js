@@ -12,13 +12,11 @@ function getAccessToken () {
 
 /**
  * Maps next-intl locale segment to TMDB `language` query param.
+ * Khmer UI chrome is localized, but TMDB Khmer metadata is sparse and often
+ * falls back to original-language titles — so we request English for content.
  * @see https://developer.themoviedb.org/reference/discover-movie
  */
-export function localeToTmdbLanguage (locale) {
-  // TMDB falls back to "original language" when a translation doesn't exist.
-  // For a Khmer UI, the expected fallback is English (not Thai/original),
-  // so we request English for all non-English locales.
-  if (locale === 'en') return 'en-US'
+export function localeToTmdbLanguage (_locale) {
   return 'en-US'
 }
 
@@ -105,12 +103,12 @@ export async function getTvById (id, language = 'en-US') {
   return res.json()
 }
 
-export async function getTvVideos (id) {
+export async function getTvVideos (id, language = 'en-US') {
   const numericId = Number(id)
   if (!Number.isFinite(numericId) || numericId < 1) {
     return []
   }
-  const data = await tmdbFetch(`/tv/${numericId}/videos`)
+  const data = await tmdbFetch(`/tv/${numericId}/videos`, { language })
   return data.results ?? []
 }
 
@@ -170,30 +168,61 @@ export async function getMovieById (id, language = 'en-US') {
   return res.json()
 }
 
-export async function getMovieVideos (id) {
+export async function getMovieVideos (id, language = 'en-US') {
   const numericId = Number(id)
   if (!Number.isFinite(numericId) || numericId < 1) {
     return []
   }
-  const data = await tmdbFetch(`/movie/${numericId}/videos`)
+  const data = await tmdbFetch(`/movie/${numericId}/videos`, { language })
   return data.results ?? []
 }
 
-export async function searchMulti (query, language = 'en-US', page = 1) {
+/** Search movies + TV only (avoids people/other multi-search empty pages). */
+export async function searchMoviesAndTv (query, language = 'en-US', page = 1) {
   const q = typeof query === 'string' ? query.trim() : ''
   if (!q) {
     return { results: [], totalPages: 0 }
   }
-  const data = await tmdbFetch('/search/multi', {
-    query: q,
-    language,
-    page,
-    include_adult: 'false'
-  })
-  return {
-    results: data.results ?? [],
-    totalPages: data.total_pages ?? 1
-  }
+
+  const [movieData, tvData] = await Promise.all([
+    tmdbFetch('/search/movie', {
+      query: q,
+      language,
+      page,
+      include_adult: 'false'
+    }),
+    tmdbFetch('/search/tv', {
+      query: q,
+      language,
+      page,
+      include_adult: 'false'
+    })
+  ])
+
+  const movies = (movieData.results ?? []).map(r => ({
+    ...r,
+    media_type: 'movie'
+  }))
+  const shows = (tvData.results ?? []).map(r => ({
+    ...r,
+    media_type: 'tv'
+  }))
+
+  const results = [...movies, ...shows].sort(
+    (a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)
+  )
+
+  const totalPages = Math.max(
+    movieData.total_pages ?? 0,
+    tvData.total_pages ?? 0,
+    results.length > 0 ? 1 : 0
+  )
+
+  return { results, totalPages }
+}
+
+export async function searchMulti (query, language = 'en-US', page = 1) {
+  return searchMoviesAndTv(query, language, page)
 }
 
 export async function getSimilarMovies (id, language = 'en-US') {

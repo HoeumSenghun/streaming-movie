@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import {
   fetchTvById,
@@ -25,6 +25,11 @@ function episodeRuntimeMins (show) {
   return null
 }
 
+function formatRating (value) {
+  const n = Number(value)
+  return Number.isFinite(n) ? n.toFixed(1) : '—'
+}
+
 export async function generateMetadata ({ params }) {
   const { locale, id } = await params
   const siteName = getSiteName()
@@ -38,17 +43,31 @@ export async function generateMetadata ({ params }) {
     : show.poster_path
       ? `https://image.tmdb.org/t/p/w780${show.poster_path}`
       : undefined
+  const title = `${show.name} — ${siteName}`
   return {
-    title: `${show.name} — ${siteName}`,
+    title,
     description: show.overview,
-    openGraph: ogImage
-      ? { images: [{ url: ogImage, alt: show.name }] }
-      : undefined
+    alternates: {
+      canonical: `/${locale}/tv-shows/${id}`,
+      languages: {
+        en: `/en/tv-shows/${id}`,
+        km: `/km/tv-shows/${id}`
+      }
+    },
+    openGraph: {
+      title,
+      description: show.overview || undefined,
+      type: 'website',
+      siteName,
+      locale,
+      ...(ogImage ? { images: [{ url: ogImage, alt: show.name }] } : {})
+    }
   }
 }
 
 export default async function TvDetailPage ({ params }) {
   const { locale, id } = await params
+  setRequestLocale(locale)
 
   const showRes = await fetchTvById(id, locale)
 
@@ -87,6 +106,7 @@ export default async function TvDetailPage ({ params }) {
 
   const runMins = episodeRuntimeMins(show)
   const cast = (show.aggregate_credits?.cast ?? []).slice(0, 16)
+  const ratingLabel = formatRating(show.vote_average)
 
   return (
     <div className="min-h-screen pb-16">
@@ -120,11 +140,13 @@ export default async function TvDetailPage ({ params }) {
           {show.first_air_date?.slice(0, 4)}
           {show.last_air_date ? ` – ${show.last_air_date.slice(0, 4)}` : ''}
           {' · ★ '}
-          {Number(show.vote_average).toFixed(1)}
+          {ratingLabel}
           {typeof show.number_of_seasons === 'number'
-            ? ` · ${show.number_of_seasons} season${show.number_of_seasons !== 1 ? 's' : ''}`
+            ? ` · ${tDetail('seasons', { count: show.number_of_seasons })}`
             : ''}
-          {runMins ? ` · ~${runMins} min/ep` : ''}
+          {runMins
+            ? ` · ${tDetail('episodeRuntime', { mins: runMins })}`
+            : ''}
         </p>
         <p className="text-zinc-300 leading-relaxed mb-8">{show.overview}</p>
         <div className="flex flex-wrap gap-3">
