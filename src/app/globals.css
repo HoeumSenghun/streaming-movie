@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-red: #e50914;
+  --color-brand-dark: #141414;
+  --color-brand-card: #1a1a1a;
+  --color-brand-muted: #6b7280;
+  --background-image-hero-gradient: linear-gradient(to right, rgba(0, 0, 0, 0.9) 40%, transparent);
+  --background-image-card-gradient: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+}
